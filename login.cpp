@@ -5,4 +5,4 @@ int main(){
     //ok
     cout<<"welcome";//helo
     return(0);
-}
+}//end
