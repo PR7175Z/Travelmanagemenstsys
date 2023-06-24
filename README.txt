@@ -1,2 +1,2 @@
--data to store i file:
+-data to store in file:
   userId, password, fname, lname, address, phone, email
