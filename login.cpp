@@ -22,13 +22,14 @@ int main(){
     system("cls");
     login l;
     cout<<"Welcome to TMS"<<endl;
-    cout<<"1.Login"<<endl
+    system("cls");
+    cout<<"1. Login"<<endl
     <<"2. Register"<<endl
     <<"3. Forgot Password";
     l.readlogin();
     return(0);
 }
-void login :: readlogin(){
+void login :: readlogin(){//to get username and password
     cout<<endl<<"User ID: ";
     ch = getch();
     while(ch != 13){
@@ -58,22 +59,22 @@ void login :: readlogin(){
         }
     }
     if(checklogin(userId, password)){
-        cout<<"true";
+        cout<<"Login Successful";
     }
     else{
-        cout<<"false";
+        cout<<"Invalid Login Attempt";
     }
 }
-bool login :: checklogin(string id, string ps){
-    login l;
+bool login :: checklogin(string id, string ps){//verifies if input user name and password are true or not
+    login l;//object of class login
     int count = 0;
     fstream fin;
     fin.open("login.txt",ios::in);
     fin.seekg(0,ios::beg);
     fin.read((char*)&l, sizeof(l));
     while(!fin.eof()){
-        if(id == userId ){
-            count = 1;
+        if(id == userId && ps == password){
+            count = 1;//condition met if both id and passwird are correct
         }
         fin.read((char*)&l, sizeof(l));
     }
@@ -85,7 +86,7 @@ bool login :: checklogin(string id, string ps){
         return false;
     }
 }
-void login :: read(){
+void login :: read(){//just for study purpose will be removed after wards 
     login l;
     fstream fout;
     fout.open("login.txt",ios::out | ios::app | ios::in);
@@ -96,10 +97,10 @@ void login :: read(){
     fout.close();
     getch();
 }
-void login :: display(){
+void login :: display(){//just for study purpose will be removed after wards
     cout<<endl<<"user"<<userId<<"\tpass:"<<password<<endl;
 }
-void login :: signup(){
+void login :: signup(){// to create new user
     cout<<"First Name: ";
     ch=getch();
     while(ch != 13){
