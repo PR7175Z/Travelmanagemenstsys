@@ -9,14 +9,13 @@ using namespace std;
 class login{
     protected:
         char ch;
-        string userId, password, fname, lname, address, email, phone;
+        string userId, password, fname, lname, address, phone, email, power;
     public:
         void readlogin();
         bool checklogin(string, string);
         void read();
         void display();
         void signup();
-    
 };
 int main(){
     system("cls");
@@ -48,7 +47,7 @@ void login :: readlogin(){//to get username and password
     ch = getch();
     while(ch != 13){
         if(ch != 8){
-            cout<<ch;
+            cout<<'*';
             password.push_back(ch);
             ch = getch(); 
         }
@@ -103,12 +102,34 @@ void login :: display(){//just for study purpose will be removed after wards
 void login :: signup(){// to create new user
     cout<<"First Name: ";
     ch=getch();
-    while(ch != 13){
-        if(ch >= 54 && ch<=64){
-
+    while(ch != '\n' && ch != ' '){
+        if((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')){
+            cout<<ch;
+            fname.push_back(ch);
+            ch=getch();
+        }
+        else if(ch == 8){
+            fname.pop_back();
+            cout<<"\b";
+            ch=getch();
         }
     }
     cout<<"Last Name: ";
+    ch=getch();
+    while(ch != '\n' && ch != ' '){
+        if((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')){
+            cout<<ch;
+            fname.push_back(ch);
+            ch=getch();
+        }
+        else if(ch == 8){
+            fname.pop_back();
+            cout<<"\b";
+            ch=getch();
+        }
+    }
     cout<<"Address: ";
+    cin>>address;
     cout<<"Email ";
+    cout<<"phone no.";
 }
