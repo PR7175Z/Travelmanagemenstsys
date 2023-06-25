@@ -11,24 +11,38 @@ class login{
         char ch;
         string userId, password, fname, lname, address, phone, email, power;
     public:
-        void readlogin();
-        bool checklogin(string, string);
+        void signin();
+        bool verifySignin(string, string);
+        void signup();
+        void resetPassword();
         void read();
         void display();
-        void signup();
 };
 int main(){
     system("cls");
     login l;
+    int choice=1;
     cout<<"Welcome to TMS"<<endl;
     system("cls");
     cout<<"1. Login"<<endl
     <<"2. Register"<<endl
     <<"3. Forgot Password";
-    l.readlogin();
+    while(choice != 0){
+        cin>>choice;
+        switch (choice){
+            case 1:
+                l.signin();
+            case 2:
+                l.signup();
+            case 3:
+                l.resetPassword();
+            default:
+                cout<<"INVALID REQUEST";
+        }
+    }
     return(0);
 }
-void login :: readlogin(){//to get username and password
+void login :: signin(){//to get username and password
     cout<<endl<<"User ID: ";
     ch = getch();
     while(ch != 13){
@@ -57,14 +71,14 @@ void login :: readlogin(){//to get username and password
             ch = getch();
         }
     }
-    if(checklogin(userId, password)){
+    if(verifySignin(userId, password)){
         cout<<"Login Successful";
     }
     else{
         cout<<"Invalid Login Attempt";
     }
 }
-bool login :: checklogin(string id, string ps){//verifies if input user name and password are true or not
+bool login :: verifySignin(string id, string ps){//verifies if input user name and password are true or not
     login l;//object of class login
     int count = 0;
     fstream fin;
@@ -133,3 +147,34 @@ void login :: signup(){// to create new user
     cout<<"Email ";
     cout<<"phone no.";
 }
+void login :: resetPassword(){
+    login l,m;
+    fstream fin, fout;
+    fin.open("login.txt", ios::in);
+    fin.seekg(0,ios::beg);
+    fout.open("login.txt", ios::app | ios::out);
+    cout<<endl<<"User ID: ";
+    ch = getch();
+    while(ch != 13){
+        if(ch != 8){
+            cout<<ch;
+            userId.push_back(ch);
+            ch = getch();
+        }
+        else if(ch == 8){
+            cout<<"\b";
+            userId.pop_back();
+            ch = getch();
+        }
+    }
+    if(userId == l.userId){
+        fin.read((char*)&l,sizeof(l));
+        m.password = "happy123";
+    }//purano data delete ganrana baaki xa hae
+    fout.write((char*)&l,sizeof(l));
+    fin.close();
+    fout.close();
+    cout<<"PAssword: ";
+}
+
+
