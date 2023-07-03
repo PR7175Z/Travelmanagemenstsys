@@ -5,19 +5,23 @@
 #include<time.h>
 #include<vector>
 #include<fstream>
+
 using namespace std;
-int count,valid;
+
+int count=0,valid=0;
+
 class login{
     protected:
         char ch;
         string userId, password, fname, lname, address, phone, email, power;
     public:
-        void getpassword(char*);
-        void signup();
-        void writeFile();
-        void display();
-        void readFile();
         bool signin();
+
+        void writeFile();
+        void readFile();
+        void display();
+        void signup();
+
         string get_userId();
         string get_password();
         string get_fname();
@@ -25,27 +29,51 @@ class login{
         string get_address();
         string get_phone();
         string get_email();
-        string get_power();
+        string get_power(bool);
+        string change_password(char*);
 };
 
 int main(){
     system("cls");
     fstream fin;
     login l;
+    char* change;
     int choice=1;
     while(choice!=0){
         system("cls");
-        cout<<"Enter choice:"<<endl
-        <<"1. Signup"<<endl
-        <<"2. Display"<<endl;
+        cout<<"1. Sign In"<<endl
+        <<"2. Sign Up"<<endl
+        <<"3. Change Password"<<endl
+        <<"4. Reset Password"<<endl
+        <<"5. Display"<<endl
+        <<"Enter choice: ";
         cin>>choice;
         switch(choice){
+            case 0:
+                choice=0;
+                break;
             case 1:
+                l.signin();
+                getch();
+                break;
+            case 2:
                 l.signup();
                 l.writeFile();
                 cout<<endl<<"signup successful";
                 break;
-            case 2:
+            case 3:
+                change = "reset";
+                l.change_password(change);
+                cout<<"Your New Password is: 'reset'";
+                getch();
+                break;
+            case 4:
+                change = "change";
+                l.change_password(change);
+                cout<<"Password Changed Successfully";
+                getch();
+                break;
+            case 5:
                 fin.open("login.txt",ios::in | ios::binary);
                 fin.seekg(0,ios::beg);
                     fin.read((char*)&l, sizeof(l));
@@ -55,9 +83,6 @@ int main(){
                     }
                     fin.close();
                 getch();
-                break;
-            case 0:
-                choice=0;
                 break;
             default:
                 cout<<"invalid choice:";
@@ -73,27 +98,21 @@ void login :: writeFile(){//check garna baaki xa hae
     fout.write((char*)this,sizeof(*this));
     fout.close();
 }
-void login :: getpassword(char* choice){
-            string newPs,cfmPs;
-            if(choice == "reset"){
-                password = "reset";
-            }
-            else if(choice == "change"){
-                do{
-                    cout<<"Enter New Password: ";
-                    cin>>newPs;
-                    cout<<"Confirm Password: ";
-                    cin>>cfmPs;
-                    if(newPs == cfmPs){
-                        password = cfmPs;
-                    }
-                    else{
-                        cout<<"password did not match";
-                    }
-                }while(newPs != cfmPs);
-            }
-        }
 void login :: signup(){
+    int choice;
+    cout<<endl<<"1. Register as Admin."
+    <<endl<<"2. Register as Author.";
+    cin>>choice;
+    if(choice == 1){
+        get_power(true);
+    }
+    else if(choice == 2){
+        get_power(false);
+    }
+    else{
+        cout<<"Invalid Input";
+        signup();
+    }
     get_userId();
     get_password();
     get_fname();
@@ -109,7 +128,8 @@ void login :: display(){
     <<"Last name: "<<lname<<endl
     <<"Address: "<<address<<endl
     //<<"Email: "<<email<<endl
-    <<"Phone: "<<phone<<endl;
+    <<"Phone: "<<phone<<endl
+    <<"Power: "<<power<<endl;
 }
 /* void login :: readFile(){
     userId;
@@ -314,15 +334,33 @@ string login :: get_password(){
     }
     return(password);
 }
-/* string login :: get_power(){
-    int id;
-    readFile();
-    id=stoi(userId);
-    if(id>870000){
-        power="ADMIN";
+string login :: change_password(char* choice){
+    string new_password,confirm_password;
+    if(choice == "reset"){
+        password = "reset";
     }
-    else if(id<870000){
-        power="AUTHOR";
+    else if(choice == "change"){
+        cout<<"Enter New  ";
+        new_password = get_password();
+        cout<<"Confirm  ";
+        confirm_password = get_password();
+        if(new_password == confirm_password){
+            password = confirm_password;
+        }
+        else{
+            cout<<"Password did not match";
+            choice = "change";
+            change_password(choice);
+        }
+    }
+    return (password);
+}
+string login :: get_power(bool pow){
+    if(pow){
+        power = "ADMIN";
+    }
+    else if(!pow){
+        power = "AUTHOR";
     }
     return (power);
-} */
+}
