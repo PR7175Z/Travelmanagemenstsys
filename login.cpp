@@ -32,6 +32,15 @@ class login{
                 }while(newPs != cfmPs);
             }
         }
+        string get_userId();
+        string get_password();
+        string get_fname();
+        string get_lname();
+        string get_address();
+        string get_phone();
+        string get_email();
+        string get_power();
+
         string validEmail();
         void writetofile();
         void resetPassword(char* , char*);
@@ -308,4 +317,5 @@ void login :: changePassword(char* id , char* ps){
     }
     getch();
 }
+
 
