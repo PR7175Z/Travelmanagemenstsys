@@ -9,7 +9,7 @@ using namespace std;
 int count,valid;
 class login{
     protected:
-
+//ok
         char ch;
         string userId, password, fname, lname, address, phone, email, power;
     public:
