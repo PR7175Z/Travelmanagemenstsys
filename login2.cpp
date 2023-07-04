@@ -7,7 +7,7 @@
 #include<fstream>
 
 using namespace std;
-
+static int id;
 int count=0,valid=0;
 
 class login{
@@ -15,12 +15,12 @@ class login{
         char ch;
         string userId, password, fname, lname, address, phone, email, power;
     public:
-        bool signin();
+        bool signin(bool);
 
         void writeFile();
         void readFile();
         void display();
-        void signup();
+        void signup(bool);
 
         string get_userId();
         string get_password();
@@ -29,51 +29,111 @@ class login{
         string get_address();
         string get_phone();
         string get_email();
+        string cpassword();
         string get_power(bool);
-        string change_password(char*);
 };
 
 int main(){
     system("cls");
     fstream fin;
     login l;
-    char* change;
-    int choice=1;
-    while(choice!=0){
+    int choice=1,operation=1;
+    while(choice!=5){
         system("cls");
-        cout<<"1. Sign In"<<endl
-        <<"2. Sign Up"<<endl
-        <<"3. Change Password"<<endl
-        <<"4. Reset Password"<<endl
-        <<"5. Display"<<endl
+        cout<<"1. Admin"<<endl
+        <<"2. Author"<<endl
+        <<"3. List Package"<<endl
+        <<"4. Search Package"<<endl
+        <<"5. Exit"<<endl
+        <<"6. Display Accounts"<<endl
         <<"Enter choice: ";
         cin>>choice;
         switch(choice){
-            case 0:
-                choice=0;
+            case 1:{//for admin
+                //this is inside admin panel
+                operation=0;
+                while(operation != 4){
+                    system("cls");
+                    cout<<"Admin Menu"<<endl
+                    <<"1. Log In"<<endl
+                    <<"2. Register"<<endl
+                    <<"3. Forgot Password"<<endl
+                    <<"4. Exit"<<endl
+                    <<"Enter choice: ";
+                    cin>>operation;
+                    switch(operation){
+                        case 1://login
+                            if(l.signin(true)){
+                                cout<<"Welcome ADMIN";
+                            }
+                            getch();
+                            break;
+                        case 2://register
+                            l.signup(true);
+                            l.writeFile();
+                            getch();
+                            break;
+                        case 4://exit
+                            operation=4;
+                            break;
+                        default:
+                            cout<<"Invalid Operation";
+                            getch();
+                            break;
+                    }
+                }
                 break;
-            case 1:
-                l.signin();
+            }
+            case 2:{//for author
+                //this is inside author panel
+                operation=0;
+                while(operation != 4){
+                    system("cls");
+                    cout<<"Author Menu"<<endl
+                    <<"1. Log In"<<endl
+                    <<"2. Register"<<endl
+                    <<"3. Forgot Password"<<endl
+                    <<"4. Exit"<<endl
+                    <<"Enter choice: ";
+                    cin>>operation;
+                    switch(operation){
+                        case 1:
+                            if(l.signin(true)){
+                                cout<<"Welcome AUTHOR";
+                            }
+                            getch();
+                            break;
+                        case 2:
+                            l.signup(false);
+                            l.writeFile();
+                            getch();
+                            break;
+                        case 4:
+                            operation=4;
+                            break;
+                        default:
+                            cout<<"Invalid Operation";
+                            getch();
+                            break;
+                    }
+                }
+                break;
+            }
+            case 3:{//check
+                cout<<"List Package";
                 getch();
                 break;
-            case 2:
-                l.signup();
-                l.writeFile();
-                cout<<endl<<"signup successful";
-                break;
-            case 3:
-                change = "reset";
-                l.change_password(change);
-                cout<<"Your New Password is: 'reset'";
+            }
+            case 4:{//search
+                cout<<"Search Package";
                 getch();
                 break;
-            case 4:
-                change = "change";
-                l.change_password(change);
-                cout<<"Password Changed Successfully";
-                getch();
+            }
+            case 5:{//exit
+                choice = 5;
                 break;
-            case 5:
+            }
+            case 6:{//display
                 fin.open("login.txt",ios::in | ios::binary);
                 fin.seekg(0,ios::beg);
                     fin.read((char*)&l, sizeof(l));
@@ -84,9 +144,11 @@ int main(){
                     fin.close();
                 getch();
                 break;
-            default:
+            }
+            default:{
                 cout<<"invalid choice:";
                 break;
+            }
         }
     }
     return 0;
@@ -98,32 +160,53 @@ void login :: writeFile(){//check garna baaki xa hae
     fout.write((char*)this,sizeof(*this));
     fout.close();
 }
-void login :: signup(){
-    int choice;
-    cout<<endl<<"1. Register as Admin."
-    <<endl<<"2. Register as Author.";
-    cin>>choice;
-    if(choice == 1){
-        get_power(true);
-    }
-    else if(choice == 2){
-        get_power(false);
-    }
-    else{
-        cout<<"Invalid Input";
-        signup();
-    }
+bool login :: signin(bool sign){
+    count = -1;
+    login r;
+    fstream fin;
+    fin.open("login.txt",ios::in | ios::binary);
     get_userId();
     get_password();
+    fin.seekg(0,ios::beg);
+    if(sign){
+        while(!fin.eof()){
+            fin.read((char*)&r,sizeof(r));
+            if(userId==r.userId && password == r.password && r.power == "ADMIN"){
+                count = 1;
+            }
+        }
+    }
+    else if(!sign){
+        while(!fin.eof()){
+            fin.read((char*)&r,sizeof(r));
+            if(userId==r.userId && password == r.password && r.power == "AUTHOR"){
+                count = 1;
+            }
+        }
+    }
+    fin.close();
+    if(count == 1){
+        return (true);//true for admin
+    }
+    else{
+        cout<<"ID not Found please try again";
+        signin(sign);
+    }
+}
+void login :: signup(bool sign){
     get_fname();
     get_lname();
     get_address();
     get_phone();
+    get_password();
+    get_power(sign);//true for admin, false for author
+    get_userId();
+    cout<<endl<<"Please Note Your User Id for Future Login."<<endl<<"Your User ID is: "<<userId;
 }
 void login :: display(){
     cout<<endl
-    <<"userID"<<userId<<endl
-    <<"Password:"<<password<<endl
+    <<"userID: "<<userId<<endl
+    <<"Password: "<<password<<endl
     <<"First name: "<<fname<<endl
     <<"Last name: "<<lname<<endl
     <<"Address: "<<address<<endl
@@ -131,35 +214,27 @@ void login :: display(){
     <<"Phone: "<<phone<<endl
     <<"Power: "<<power<<endl;
 }
-/* void login :: readFile(){
-    userId;
-    password;
-    fname;
-    lname;
-    address;
-    phone;
-} */
 string login :: get_userId(){
-    count = 0;
+    //here power is already stored from signup
+    login l;
+    fstream fin;
     userId.clear();
-    cout<<endl<<"User ID: ";
-    ch=getch();
-    do{
-        if(ch == 8 && count != 0){//backspace
-            cout<<"\b";
-            userId.pop_back();
-            count--;
+    if(power == "ADMIN"){
+        srand(time(0));
+        id=870000+rand()%10000;
+    }
+    else if(power == "AUTHOR"){
+        srand(time(0));
+        id=370000+rand()%10000;
+    }
+    userId=to_string(id);
+    fin.open("login.txt",ios::in | ios::binary);
+    fin.seekg(0,ios::beg);
+    while(!fin.eof()){
+        fin.read((char*)&l,sizeof(l));
+        if(l.userId == userId){
+            get_userId();
         }
-        else if(ch >= 48 && ch <= 57){//reads only number
-            cout<<ch;
-            userId.push_back(ch);
-            count++;
-        }
-        ch=getch();
-    }while(ch != 13 && count!=10);
-    if(count == 0){
-        cout<<"Invalid User ID";
-        get_userId();
     }
     return (userId);
 }
@@ -334,28 +409,8 @@ string login :: get_password(){
     }
     return(password);
 }
-string login :: change_password(char* choice){
-    string new_password,confirm_password;
-    if(choice == "reset"){
-        password = "reset";
-    }
-    else if(choice == "change"){
-        cout<<"Enter New  ";
-        new_password = get_password();
-        cout<<"Confirm  ";
-        confirm_password = get_password();
-        if(new_password == confirm_password){
-            password = confirm_password;
-        }
-        else{
-            cout<<"Password did not match";
-            choice = "change";
-            change_password(choice);
-        }
-    }
-    return (password);
-}
 string login :: get_power(bool pow){
+    power.clear();
     if(pow){
         power = "ADMIN";
     }
